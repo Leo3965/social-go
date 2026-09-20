@@ -1,5 +1,8 @@
-run: build
-	.\bin\api.exe
+setup:
+	go install github.com/air-verse/air@latest
+
+run:
+	air
 
 run-local:
 	go run ./cmd/api
