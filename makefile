@@ -5,7 +5,7 @@ run:
 	air
 
 run-local:
-	go run ./cmd/api
+	go run ./cmd
 
 test:
 	go test ./...
@@ -14,5 +14,5 @@ race:
 	go test ./... -race
 
 build:
-	go build -o bin/api.exe ./cmd/api
+	go build -o bin/api ./cmd
 

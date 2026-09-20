@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"log"
@@ -15,15 +15,15 @@ const (
 	TextPlain       = "text/plain; charset=utf-8"
 )
 
-type application struct {
-	config config
+type Application struct {
+	Config Config
 }
 
-type config struct {
-	addr string
+type Config struct {
+	Addr string
 }
 
-func (app *application) mount() http.Handler {
+func (app *Application) Mount() http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -43,16 +43,16 @@ func (app *application) mount() http.Handler {
 	return r
 }
 
-func (app *application) run(handler http.Handler) error {
+func (app *Application) Run(handler http.Handler) error {
 	srv := http.Server{
-		Addr:         app.config.addr,
+		Addr:         app.Config.Addr,
 		Handler:      handler,
 		WriteTimeout: time.Second * 30,
 		ReadTimeout:  time.Second * 10,
 		IdleTimeout:  time.Minute,
 	}
 
-	log.Printf("server has started at %s", app.config.addr)
+	log.Printf("server has started at %s", app.Config.Addr)
 
 	return srv.ListenAndServe()
 }
