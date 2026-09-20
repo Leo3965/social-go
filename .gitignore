@@ -1,2 +1,13 @@
-.idea/
+# Binaries
+bin/
+
+# Air temporary files
 tmp/
+
+# Environment
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/
