@@ -1,5 +1,5 @@
 ### GET health check
-GET http://localhost:8080/health
+GET http://localhost:8080/v1/health
 
 ### GET 404
 GET http://localhost:8080
