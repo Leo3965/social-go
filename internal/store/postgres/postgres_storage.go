@@ -19,7 +19,7 @@ func (pg *PGStorage) Users() store.UsersRepository {
 	return pg.users
 }
 
-func NewPostgresStorage(db *sql.DB) store.Storage {
+func NewStorage(db *sql.DB) store.Storage {
 	return &PGStorage{
 		posts: &PGPostsRepository{db},
 		users: &PGUsersRepository{db},
