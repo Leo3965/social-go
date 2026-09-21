@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-type PostsStore struct {
+type PGPostsRepository struct {
 	db *sql.DB
 }
 
-func (p *PostsStore) Create(ctx context.Context) error {
+func (p *PGPostsRepository) Create(ctx context.Context) error {
 	// INSERT INTO posts ...
 	log.Println("creating posts")
 	return nil

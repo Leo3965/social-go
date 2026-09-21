@@ -4,16 +4,16 @@ import (
 	"context"
 )
 
-// Storage Any type that implements Storage must have two methods: Posts() and Users().
+// Storage Any type that implements Storage must have two methods: PostsRepository() and UsersRepository().
 type Storage interface {
-	Posts() Posts
-	Users() Users
+	Posts() PostsRepository
+	Users() UsersRepository
 }
 
-type Posts interface {
+type PostsRepository interface {
 	Create(ctx context.Context) error
 }
 
-type Users interface {
+type UsersRepository interface {
 	Create(ctx context.Context) error
 }

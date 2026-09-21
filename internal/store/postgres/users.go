@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-type UsersStore struct {
+type PGUsersRepository struct {
 	db *sql.DB
 }
 
-func (u *UsersStore) Create(ctx context.Context) error {
+func (u *PGUsersRepository) Create(ctx context.Context) error {
 	// INSERT INTO users ...
 	log.Println("creating users")
 	return nil

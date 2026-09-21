@@ -7,21 +7,21 @@ import (
 )
 
 type PGStorage struct {
-	posts store.Posts
-	users store.Users
+	posts store.PostsRepository
+	users store.UsersRepository
 }
 
-func (pg *PGStorage) Posts() store.Posts {
+func (pg *PGStorage) Posts() store.PostsRepository {
 	return pg.posts
 }
 
-func (pg *PGStorage) Users() store.Users {
+func (pg *PGStorage) Users() store.UsersRepository {
 	return pg.users
 }
 
 func NewPostgresStorage(db *sql.DB) store.Storage {
 	return &PGStorage{
-		posts: &PostsStore{db},
-		users: &UsersStore{db},
+		posts: &PGPostsRepository{db},
+		users: &PGUsersRepository{db},
 	}
 }
