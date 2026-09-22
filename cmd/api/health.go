@@ -6,6 +6,6 @@ import (
 
 func (app *Application) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(ContentType, TextPlain)
-	app.Store.Posts().Create(r.Context())
+	app.Store.Posts().Create(r.Context(), nil)
 	_, _ = w.Write([]byte("ok"))
 }
