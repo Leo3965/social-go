@@ -1,5 +1,11 @@
-setup:
+local-setup:
 	go install github.com/air-verse/air@latest
+
+up:
+	docker-compose up -d
+
+down:
+	docker-compose down -v
 
 run:
 	air
