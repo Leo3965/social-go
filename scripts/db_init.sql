@@ -1,4 +1,1 @@
 CREATE DATABASE social;
-
-
-
