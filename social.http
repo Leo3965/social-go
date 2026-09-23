@@ -12,10 +12,10 @@ Content-Type: application/json
 {
   "title": "post: {{$random.uuid}}",
   "content": "hey guys this is my post number: {{$random.integer()}}",
-  "tags": ["tag1", "tag2"]
+  "tags": ["tag1"]
 }
 
 ### POSTS - find by id
-GET http://localhost:8080/v1/posts/3
+GET http://localhost:8080/v1/posts/5
 Content-Type: application/json
 

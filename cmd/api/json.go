@@ -3,9 +3,17 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
 const MaxBytes = 1_048_578 // 1mb
+
+var Validate *validator.Validate
+
+func init() {
+	Validate = validator.New(validator.WithRequiredStructEnabled())
+}
 
 type errorDto struct {
 	Error string `json:"error"`
