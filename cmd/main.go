@@ -18,8 +18,10 @@ func main() {
 	}
 
 	cfg := api.Config{
-		Addr: env.GetString("ADDR", ":8080"),
-		Db:   dbConfig,
+		Addr:    env.GetString("ADDR", ":8080"),
+		Db:      dbConfig,
+		Env:     env.GetString("ENV", "development"),
+		Version: "0.0.1",
 	}
 
 	db, err := postgres.New(dbConfig.Addr, dbConfig.MaxOpenConns, dbConfig.MaxIdleConns, dbConfig.MaxIdleTime)
