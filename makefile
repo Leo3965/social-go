@@ -6,16 +6,16 @@ local-setup:
 	go install github.com/air-verse/air@latest
 
 # make migrate-create name=create_users
-.PHONY: migrate-create
-migrate-create:
+.PHONY: migration-create
+migration-create:
 	migrate create -seq -ext sql -dir $(MIGRATIONS_PATH) $(name)
 
-.PHONY: migrate-up
-migrate-up:
+.PHONY: migration-up
+migration-up:
 	migrate -path=$(MIGRATIONS_PATH) -database=$(DB_MIGRATION_ADDR) up
 
-.PHONY: migrate-down
-migrate-down:
+.PHONY: migration-down
+migration-down:
 	migrate -path=$(MIGRATIONS_PATH) -database=$(DB_MIGRATION_ADDR) down
 
 

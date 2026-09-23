@@ -3,3 +3,15 @@ GET http://localhost:8080/v1/health
 
 ### GET 404
 GET http://localhost:8080
+
+
+### POSTS - create
+POST http://localhost:8080/v1/posts
+Content-Type: application/json
+
+{
+  "title": "post: {{$random.uuid}}",
+  "content": "hey guys this is my post number: {{$random.integer()}}",
+  "tags": ["tag1", "tag2"]
+}
+

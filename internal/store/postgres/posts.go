@@ -13,8 +13,8 @@ type PGPostsRepository struct {
 }
 
 func (p *PGPostsRepository) Create(ctx context.Context, post *model.Post) error {
-	query := `INSERT INTO post (content, title, user_id, tags)
-			  VALUES (1$, 2$, 3$, 4$)
+	query := `INSERT INTO posts (content, title, user_id, tags)
+			  VALUES ($1, $2, $3, $4)
 			  RETURNING id, created_at, updated_at`
 
 	err := p.db.QueryRowContext(
