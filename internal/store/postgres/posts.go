@@ -14,7 +14,7 @@ type PostRepository struct {
 	db *sql.DB
 }
 
-func (pr *PostRepository) FindById(ctx context.Context, id int64) (*model.Post, error) {
+func (pr *PostRepository) Find(ctx context.Context, id int64) (*model.Post, error) {
 	query := `SELECT id, content, title, user_id, created_at, updated_at, tags 
 			  FROM posts WHERE id = $1`
 
@@ -59,6 +59,27 @@ func (pr *PostRepository) Create(ctx context.Context, post *model.Post) error {
 		&post.UpdatedAt)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (pr *PostRepository) Delete(ctx context.Context, id int64) error {
+	query := `DELETE FROM posts
+			  WHERE id = $1`
+
+	result, err := pr.db.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return store.ErrNotFound
 	}
 
 	return nil

@@ -3,12 +3,10 @@ package api
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/Leo3965/social/cmd/api/dto"
 	"github.com/Leo3965/social/internal/data/model"
 	"github.com/Leo3965/social/internal/store"
-	"github.com/go-chi/chi/v5"
 )
 
 func (app *Application) createPostHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,9 +42,8 @@ func (app *Application) createPostHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
-func (app *Application) getPostHandler(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "postID")
-	id, err := strconv.ParseInt(idParam, 10, 64)
+func (app *Application) findByIDPostHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := app.getIDParam(r, "postID")
 	if err != nil {
 		app.internalErrorResponse(w, r, err)
 		return
@@ -54,7 +51,7 @@ func (app *Application) getPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	post, err := app.Store.Posts().FindById(ctx, id)
+	post, err := app.Store.Posts().Find(ctx, id)
 	if err != nil {
 		switch {
 		case errors.Is(err, store.ErrNotFound):
@@ -78,4 +75,30 @@ func (app *Application) getPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func (app *Application) deletePostHandler(w http.ResponseWriter, r *http.Request) {
+	id, err := app.getIDParam(r, "postID")
+	if err != nil {
+		app.internalErrorResponse(w, r, err)
+		return
+	}
+
+	ctx := r.Context()
+
+	if err = app.Store.Posts().Delete(ctx, id); err != nil {
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			app.notFoundResponse(w, r, err)
+		default:
+			app.internalErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request) {
+	return
 }

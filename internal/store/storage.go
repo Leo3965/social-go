@@ -20,7 +20,8 @@ type Storage interface {
 
 type PostRepository interface {
 	Create(context.Context, *model.Post) error
-	FindById(context.Context, int64) (*model.Post, error)
+	Find(context.Context, int64) (*model.Post, error)
+	Delete(context.Context, int64) error
 }
 
 type UserRepository interface {
