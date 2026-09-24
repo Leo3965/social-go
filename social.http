@@ -16,11 +16,11 @@ Content-Type: application/json
 }
 
 ### POSTS - find
-GET http://localhost:8080/v1/posts/1
+GET http://localhost:8080/v1/posts/4
 
 
 ### POSTS - delete
-DELETE http://localhost:8080/v1/posts/1
+DELETE http://localhost:8080/v1/posts/5
 
 ### POSTS - update
 PATCH http://localhost:8080/v1/posts/3

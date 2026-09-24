@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"strings"
@@ -9,6 +10,10 @@ import (
 	"github.com/Leo3965/social/internal/data/model"
 	"github.com/Leo3965/social/internal/store"
 )
+
+type contextKey string
+
+const postCtxKey contextKey = "post"
 
 func (app *Application) createPostHandler(w http.ResponseWriter, r *http.Request) {
 	var payload dto.CreatePostPayload
@@ -44,26 +49,9 @@ func (app *Application) createPostHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (app *Application) findByIDPostHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := app.getIDParam(r, "postID")
-	if err != nil {
-		app.internalErrorResponse(w, r, err)
-		return
-	}
-
+	post := getPostFromCtx(r)
 	ctx := r.Context()
-
-	post, err := app.Store.Posts().Find(ctx, id)
-	if err != nil {
-		switch {
-		case errors.Is(err, store.ErrNotFound):
-			app.notFoundResponse(w, r, err)
-		default:
-			app.internalErrorResponse(w, r, err)
-		}
-		return
-	}
-
-	comments, err := app.Store.Comments().FindByPostId(ctx, id)
+	comments, err := app.Store.Comments().FindByPostId(ctx, post.ID)
 	if err != nil {
 		app.internalErrorResponse(w, r, err)
 		return
@@ -101,29 +89,13 @@ func (app *Application) deletePostHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := app.getIDParam(r, "postID")
-	if err != nil {
-		app.internalErrorResponse(w, r, err)
-		return
-	}
-
 	var payload dto.UpdatePostPayload
 	if err := readJSON(w, r, &payload); err != nil {
 		app.badRequestResponse(w, r, err)
 		return
 	}
 
-	ctx := r.Context()
-	post, err := app.Store.Posts().Find(ctx, id)
-	if err != nil {
-		switch {
-		case errors.Is(err, store.ErrNotFound):
-			app.notFoundResponse(w, r, err)
-		default:
-			app.internalErrorResponse(w, r, err)
-		}
-		return
-	}
+	post := getPostFromCtx(r)
 
 	if strings.TrimSpace(payload.Content) != "" {
 		post.Content = payload.Content
@@ -133,6 +105,7 @@ func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request)
 		post.Tags = payload.Tags
 	}
 
+	ctx := r.Context()
 	if err := app.Store.Posts().Update(ctx, post); err != nil {
 		switch {
 		case errors.Is(err, store.ErrNotFound):
@@ -147,4 +120,37 @@ func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request)
 		app.internalErrorResponse(w, r, err)
 		return
 	}
+}
+
+func (app *Application) postsContextMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id, err := app.getIDParam(r, "postID")
+		if err != nil {
+			app.internalErrorResponse(w, r, err)
+			return
+		}
+
+		ctx := r.Context()
+
+		post, err := app.Store.Posts().Find(ctx, id)
+		if err != nil {
+			switch {
+			case errors.Is(err, store.ErrNotFound):
+				app.notFoundResponse(w, r, err)
+			default:
+				app.internalErrorResponse(w, r, err)
+			}
+			return
+		}
+
+		ctx = context.WithValue(ctx, postCtxKey, post)
+		r = r.WithContext(ctx)
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func getPostFromCtx(r *http.Request) *model.Post {
+	post, _ := r.Context().Value(postCtxKey).(*model.Post)
+	return post
 }
