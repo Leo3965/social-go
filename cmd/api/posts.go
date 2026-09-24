@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/Leo3965/social/cmd/api/dto"
 	"github.com/Leo3965/social/internal/data/model"
@@ -96,9 +97,54 @@ func (app *Application) deletePostHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	app.writeNoContent(w)
 }
 
 func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request) {
-	return
+	id, err := app.getIDParam(r, "postID")
+	if err != nil {
+		app.internalErrorResponse(w, r, err)
+		return
+	}
+
+	var payload dto.UpdatePostPayload
+	if err := readJSON(w, r, &payload); err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	ctx := r.Context()
+	post, err := app.Store.Posts().Find(ctx, id)
+	if err != nil {
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			app.notFoundResponse(w, r, err)
+		default:
+			app.internalErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	if strings.TrimSpace(payload.Content) != "" {
+		post.Content = payload.Content
+	}
+
+	if payload.Tags != nil {
+		post.Tags = payload.Tags
+	}
+
+	if err := app.Store.Posts().Update(ctx, post); err != nil {
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			app.notFoundResponse(w, r, err)
+		default:
+			app.internalErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	if err := writeJSON(w, http.StatusOK, post); err != nil {
+		app.internalErrorResponse(w, r, err)
+		return
+	}
 }

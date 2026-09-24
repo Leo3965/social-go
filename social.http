@@ -15,10 +15,18 @@ Content-Type: application/json
   "tags": ["tag1"]
 }
 
-### POSTS - find by id
+### POSTS - find
 GET http://localhost:8080/v1/posts/1
 
 
-### POSTS - delete by id
+### POSTS - delete
 DELETE http://localhost:8080/v1/posts/1
 
+### POSTS - update
+PATCH http://localhost:8080/v1/posts/3
+Content-Type: application/json
+
+{
+  "content": "hey guys this a updated post",
+  "tags": ["updated"]
+}

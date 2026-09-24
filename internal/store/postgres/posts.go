@@ -84,3 +84,34 @@ func (pr *PostRepository) Delete(ctx context.Context, id int64) error {
 
 	return nil
 }
+
+func (pr PostRepository) Update(ctx context.Context, post *model.Post) error {
+	query := `UPDATE posts
+       		  SET title = $1,
+            	content = $2,
+            	updated_at = NOW()
+        	  WHERE id = $3`
+
+	result, err := pr.db.ExecContext(
+		ctx,
+		query,
+		post.Title,
+		post.Content,
+		post.ID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return store.ErrNotFound
+	}
+
+	return nil
+}

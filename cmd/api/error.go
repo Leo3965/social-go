@@ -30,3 +30,7 @@ func (app *Application) notFoundResponse(w http.ResponseWriter, r *http.Request,
 		log.Println(err)
 	}
 }
+
+func (app *Application) writeNoContent(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusNoContent)
+}
