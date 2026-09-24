@@ -95,6 +95,11 @@ func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	if err := Validate.Struct(payload); err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
 	post := getPostFromCtx(r)
 
 	if strings.TrimSpace(payload.Content) != "" {
