@@ -10,17 +10,17 @@ import (
 	"github.com/lib/pq"
 )
 
-type PGPostsRepository struct {
+type PostRepository struct {
 	db *sql.DB
 }
 
-func (pg *PGPostsRepository) FindById(ctx context.Context, id int64) (*model.Post, error) {
+func (pr *PostRepository) FindById(ctx context.Context, id int64) (*model.Post, error) {
 	query := `SELECT id, content, title, user_id, created_at, updated_at, tags 
 			  FROM posts WHERE id = $1`
 
 	var post model.Post
 
-	err := pg.db.QueryRowContext(ctx, query, id).Scan(
+	err := pr.db.QueryRowContext(ctx, query, id).Scan(
 		&post.ID,
 		&post.Content,
 		&post.Title,
@@ -42,12 +42,12 @@ func (pg *PGPostsRepository) FindById(ctx context.Context, id int64) (*model.Pos
 	return &post, nil
 }
 
-func (pg *PGPostsRepository) Create(ctx context.Context, post *model.Post) error {
+func (pr *PostRepository) Create(ctx context.Context, post *model.Post) error {
 	query := `INSERT INTO posts (content, title, user_id, tags)
 			  VALUES ($1, $2, $3, $4)
 			  RETURNING id, created_at, updated_at`
 
-	err := pg.db.QueryRowContext(
+	err := pr.db.QueryRowContext(
 		ctx,
 		query,
 		post.Content,

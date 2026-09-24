@@ -11,17 +11,23 @@ var (
 	ErrNotFound = errors.New("record not found")
 )
 
-// Storage Any type that implements Storage must have two methods: PostsRepository() and UsersRepository().
+// Storage Any type that implements Storage must have two methods: PostRepository() and UserRepository().
 type Storage interface {
-	Posts() PostsRepository
-	Users() UsersRepository
+	Posts() PostRepository
+	Users() UserRepository
+	Comments() CommentRepository
 }
 
-type PostsRepository interface {
-	Create(ctx context.Context, post *model.Post) error
-	FindById(ctx context.Context, id int64) (*model.Post, error)
+type PostRepository interface {
+	Create(context.Context, *model.Post) error
+	FindById(context.Context, int64) (*model.Post, error)
 }
 
-type UsersRepository interface {
-	Create(ctx context.Context, user *model.User) error
+type UserRepository interface {
+	Create(context.Context, *model.User) error
+}
+
+type CommentRepository interface {
+	Create(context.Context, *model.Comment) error
+	FindByPostId(context.Context, int64) ([]model.Comment, error)
 }

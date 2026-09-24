@@ -6,22 +6,28 @@ import (
 	"github.com/Leo3965/social/internal/store"
 )
 
-type PGStorage struct {
-	posts store.PostsRepository
-	users store.UsersRepository
+type Storage struct {
+	posts    store.PostRepository
+	users    store.UserRepository
+	comments store.CommentRepository
 }
 
-func (pg *PGStorage) Posts() store.PostsRepository {
+func (pg *Storage) Posts() store.PostRepository {
 	return pg.posts
 }
 
-func (pg *PGStorage) Users() store.UsersRepository {
+func (pg *Storage) Users() store.UserRepository {
 	return pg.users
 }
 
+func (pg *Storage) Comments() store.CommentRepository {
+	return pg.comments
+}
+
 func NewStorage(db *sql.DB) store.Storage {
-	return &PGStorage{
-		posts: &PGPostsRepository{db},
-		users: &PGUsersRepository{db},
+	return &Storage{
+		posts:    &PostRepository{db},
+		users:    &UserRepository{db},
+		comments: &CommentRepository{db},
 	}
 }

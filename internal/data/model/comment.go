@@ -2,13 +2,12 @@ package model
 
 import "time"
 
-type Post struct {
+type Comment struct {
 	ID        int64     `json:"id"`
-	Content   string    `json:"content"`
-	Title     string    `json:"title"`
 	UserID    int64     `json:"user_id"`
-	Tags      []string  `json:"tags"`
+	PostID    int64     `json:"post_id"`
+	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	Comments  []Comment `json:"comments"`
+	User      User      `json:"user"`
 }

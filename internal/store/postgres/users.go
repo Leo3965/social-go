@@ -7,16 +7,16 @@ import (
 	"github.com/Leo3965/social/internal/data/model"
 )
 
-type PGUsersRepository struct {
+type UserRepository struct {
 	db *sql.DB
 }
 
-func (p *PGUsersRepository) Create(ctx context.Context, user *model.User) error {
-	query := `INSERT INTO post (username, password, email)
-			  VALUES (1$, 2$, 3$)
+func (ur *UserRepository) Create(ctx context.Context, user *model.User) error {
+	query := `INSERT INTO users (username, password, email)
+			  VALUES ($1, $2, $3)
 			  RETURNING id, created_at, updated_at`
 
-	err := p.db.QueryRowContext(
+	err := ur.db.QueryRowContext(
 		ctx,
 		query,
 		user.Username,
