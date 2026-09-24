@@ -42,7 +42,7 @@ func (app *Application) createPostHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := writeJSON(w, http.StatusCreated, post); err != nil {
+	if err := responseJSON(w, http.StatusCreated, post); err != nil {
 		app.internalErrorResponse(w, r, err)
 		return
 	}
@@ -59,7 +59,7 @@ func (app *Application) findByIDPostHandler(w http.ResponseWriter, r *http.Reque
 
 	post.Comments = comments
 
-	if err := writeJSON(w, http.StatusOK, post); err != nil {
+	if err := responseJSON(w, http.StatusOK, post); err != nil {
 		app.internalErrorResponse(w, r, err)
 		return
 	}
@@ -113,7 +113,7 @@ func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request)
 	ctx := r.Context()
 	if err := app.Store.Posts().Update(ctx, post); err != nil {
 		switch {
-		case errors.Is(err, store.ErrNotFound):
+		case errors.Is(err, store.ErrConcurrentUpdate):
 			app.notFoundResponse(w, r, err)
 		default:
 			app.internalErrorResponse(w, r, err)
@@ -121,7 +121,7 @@ func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if err := writeJSON(w, http.StatusOK, post); err != nil {
+	if err := responseJSON(w, http.StatusOK, post); err != nil {
 		app.internalErrorResponse(w, r, err)
 		return
 	}

@@ -31,6 +31,14 @@ func (app *Application) notFoundResponse(w http.ResponseWriter, r *http.Request,
 	}
 }
 
+func (app *Application) conflictResponse(w http.ResponseWriter, r *http.Request, err error) {
+	log.Printf("concurrency update: %s path: %s error: %s", r.Method, r.URL.Path, err)
+
+	if err := writeJSONError(w, http.StatusConflict, store.ErrConcurrentUpdate.Error()); err != nil {
+		log.Println(err)
+	}
+}
+
 func (app *Application) writeNoContent(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusNoContent)
 }

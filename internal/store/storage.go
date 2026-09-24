@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("record not found")
+	ErrNotFound         = errors.New("record not found")
+	ErrConcurrentUpdate = errors.New("the record was modified by another request")
 )
 
 // Storage Any type that implements Storage must have two methods: PostRepository() and UserRepository().

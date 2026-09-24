@@ -19,6 +19,10 @@ type errorDto struct {
 	Error string `json:"error"`
 }
 
+type applicationHttpEnvelope struct {
+	Data any `json:"data"`
+}
+
 func writeJSON(w http.ResponseWriter, status int, data any) error {
 	w.Header().Set(ContentType, ApplicationJSON)
 	w.WriteHeader(status)
@@ -37,5 +41,11 @@ func readJSON(w http.ResponseWriter, r *http.Request, data any) error {
 func writeJSONError(w http.ResponseWriter, status int, message string) error {
 	return writeJSON(w, status, &errorDto{
 		Error: message,
+	})
+}
+
+func responseJSON(w http.ResponseWriter, status int, data any) error {
+	return writeJSON(w, status, &applicationHttpEnvelope{
+		Data: data,
 	})
 }

@@ -15,7 +15,7 @@ type PostRepository struct {
 }
 
 func (pr *PostRepository) Find(ctx context.Context, id int64) (*model.Post, error) {
-	query := `SELECT id, content, title, user_id, created_at, updated_at, tags 
+	query := `SELECT id, content, title, user_id, created_at, updated_at, tags, version 
 			  FROM posts WHERE id = $1`
 
 	var post model.Post
@@ -28,6 +28,7 @@ func (pr *PostRepository) Find(ctx context.Context, id int64) (*model.Post, erro
 		&post.CreatedAt,
 		&post.UpdatedAt,
 		pq.Array(&post.Tags),
+		&post.Version,
 	)
 
 	if err != nil {
@@ -89,28 +90,25 @@ func (pr PostRepository) Update(ctx context.Context, post *model.Post) error {
 	query := `UPDATE posts
        		  SET title = $1,
             	content = $2,
+            	version = version + 1,
             	updated_at = NOW()
-        	  WHERE id = $3`
+        	  WHERE id = $3 AND version = $4
+        	  RETURNING version`
 
-	result, err := pr.db.ExecContext(
+	if err := pr.db.QueryRowContext(
 		ctx,
 		query,
 		post.Title,
 		post.Content,
 		post.ID,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if rows == 0 {
-		return store.ErrNotFound
+		post.Version,
+	).Scan(&post.Version); err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return store.ErrConcurrentUpdate
+		default:
+			return err
+		}
 	}
 
 	return nil
