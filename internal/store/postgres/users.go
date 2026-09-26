@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/Leo3965/social/internal/data/model"
+	"github.com/Leo3965/social/internal/store"
 )
 
 type UserRepository struct {
@@ -15,6 +16,9 @@ func (ur *UserRepository) Create(ctx context.Context, user *model.User) error {
 	query := `INSERT INTO users (username, password, email)
 			  VALUES ($1, $2, $3)
 			  RETURNING id, created_at, updated_at`
+
+	ctx, cancel := context.WithTimeout(ctx, store.QueryTimeoutDuration)
+	defer cancel()
 
 	err := ur.db.QueryRowContext(
 		ctx,

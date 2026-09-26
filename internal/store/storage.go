@@ -3,13 +3,15 @@ package store
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/Leo3965/social/internal/data/model"
 )
 
 var (
-	ErrNotFound         = errors.New("record not found")
-	ErrConcurrentUpdate = errors.New("the record was modified by another request")
+	ErrNotFound          = errors.New("record not found")
+	ErrConcurrentUpdate  = errors.New("the record was modified by another request")
+	QueryTimeoutDuration = time.Second * 5
 )
 
 // Storage Any type that implements Storage must have two methods: PostRepository() and UserRepository().

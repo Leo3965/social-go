@@ -18,6 +18,9 @@ func (pr *PostRepository) Find(ctx context.Context, id int64) (*model.Post, erro
 	query := `SELECT id, content, title, user_id, created_at, updated_at, tags, version 
 			  FROM posts WHERE id = $1`
 
+	ctx, cancel := context.WithTimeout(ctx, store.QueryTimeoutDuration)
+	defer cancel()
+
 	var post model.Post
 
 	err := pr.db.QueryRowContext(ctx, query, id).Scan(
@@ -68,6 +71,9 @@ func (pr *PostRepository) Create(ctx context.Context, post *model.Post) error {
 func (pr *PostRepository) Delete(ctx context.Context, id int64) error {
 	query := `DELETE FROM posts
 			  WHERE id = $1`
+
+	ctx, cancel := context.WithTimeout(ctx, store.QueryTimeoutDuration)
+	defer cancel()
 
 	result, err := pr.db.ExecContext(ctx, query, id)
 	if err != nil {
