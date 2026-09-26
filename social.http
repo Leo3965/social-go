@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### POSTS - find
-GET http://localhost:8080/v1/posts/7
+GET http://localhost:8080/v1/posts/4
 
 
 ### POSTS - delete

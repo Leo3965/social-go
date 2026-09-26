@@ -18,6 +18,9 @@ migration-up:
 migration-down:
 	migrate -path=$(MIGRATIONS_PATH) -database=$(DB_MIGRATION_ADDR) down
 
+.PHONY: seed
+seed:
+	go run cmd/migrate/seed/main.go
 
 .PHONY: up
 up:

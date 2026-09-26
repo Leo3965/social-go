@@ -106,6 +106,10 @@ func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request)
 		post.Content = payload.Content
 	}
 
+	if strings.TrimSpace(payload.Title) != "" {
+		post.Title = payload.Title
+	}
+
 	if payload.Tags != nil {
 		post.Tags = payload.Tags
 	}
