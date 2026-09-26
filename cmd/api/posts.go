@@ -135,7 +135,7 @@ func (app *Application) postsContextMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id, err := app.getIDParam(r, "postID")
 		if err != nil {
-			app.internalErrorResponse(w, r, err)
+			app.badRequestResponse(w, r, err)
 			return
 		}
 

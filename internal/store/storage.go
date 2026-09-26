@@ -30,6 +30,7 @@ type PostRepository interface {
 
 type UserRepository interface {
 	Create(context.Context, *model.User) error
+	Find(context.Context, int64) (*model.User, error)
 }
 
 type CommentRepository interface {

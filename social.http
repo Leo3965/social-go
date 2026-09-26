@@ -30,3 +30,6 @@ Content-Type: application/json
   "content": "hey guys this a updated post",
   "tags": ["updated"]
 }
+
+### USERS - find
+GET http://localhost:8080/v1/users/50
