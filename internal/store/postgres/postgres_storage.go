@@ -7,9 +7,14 @@ import (
 )
 
 type Storage struct {
-	posts    store.PostRepository
-	users    store.UserRepository
-	comments store.CommentRepository
+	posts     store.PostRepository
+	users     store.UserRepository
+	comments  store.CommentRepository
+	followers store.FollowerRepository
+}
+
+func (pg *Storage) Followers() store.FollowerRepository {
+	return pg.followers
 }
 
 func (pg *Storage) Posts() store.PostRepository {
@@ -26,8 +31,9 @@ func (pg *Storage) Comments() store.CommentRepository {
 
 func NewStorage(db *sql.DB) store.Storage {
 	return &Storage{
-		posts:    &PostRepository{db},
-		users:    &UserRepository{db},
-		comments: &CommentRepository{db},
+		posts:     &PostRepository{db},
+		users:     &UserRepository{db},
+		comments:  &CommentRepository{db},
+		followers: &FollowerRepository{db},
 	}
 }

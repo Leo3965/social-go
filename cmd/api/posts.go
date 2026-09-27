@@ -118,7 +118,7 @@ func (app *Application) patchPostHandler(w http.ResponseWriter, r *http.Request)
 	if err := app.Store.Posts().Update(ctx, post); err != nil {
 		switch {
 		case errors.Is(err, store.ErrConcurrentUpdate):
-			app.notFoundResponse(w, r, err)
+			app.concurrencyResponse(w, r, err)
 		default:
 			app.internalErrorResponse(w, r, err)
 		}

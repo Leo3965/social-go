@@ -33,3 +33,10 @@ Content-Type: application/json
 
 ### USERS - find
 GET http://localhost:8080/v1/users/50
+
+### USERS - follow
+PUT http://localhost:8080/v1/users/50/follow
+
+### USERS - unfollow
+PUT http://localhost:8080/v1/users/50/unfollow
+

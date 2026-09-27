@@ -26,15 +26,23 @@ func (app *Application) badRequestResponse(w http.ResponseWriter, r *http.Reques
 func (app *Application) notFoundResponse(w http.ResponseWriter, r *http.Request, err error) {
 	log.Printf("not found: %s path: %s error: %s", r.Method, r.URL.Path, err)
 
-	if err := writeJSONError(w, http.StatusNotFound, store.ErrNotFound.Error()); err != nil {
+	if err = writeJSONError(w, http.StatusNotFound, err.Error()); err != nil {
 		log.Println(err)
 	}
 }
 
 func (app *Application) conflictResponse(w http.ResponseWriter, r *http.Request, err error) {
+	log.Printf("conflict: %s path: %s error: %s", r.Method, r.URL.Path, err)
+
+	if err = writeJSONError(w, http.StatusConflict, err.Error()); err != nil {
+		log.Println(err)
+	}
+}
+
+func (app *Application) concurrencyResponse(w http.ResponseWriter, r *http.Request, err error) {
 	log.Printf("concurrency update: %s path: %s error: %s", r.Method, r.URL.Path, err)
 
-	if err := writeJSONError(w, http.StatusConflict, store.ErrConcurrentUpdate.Error()); err != nil {
+	if err = writeJSONError(w, http.StatusConflict, store.ErrConcurrentUpdate.Error()); err != nil {
 		log.Println(err)
 	}
 }

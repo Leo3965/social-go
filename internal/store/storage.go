@@ -10,6 +10,7 @@ import (
 
 var (
 	ErrNotFound          = errors.New("record not found")
+	ErrConflict          = errors.New("record already exists")
 	ErrConcurrentUpdate  = errors.New("the record was modified by another request")
 	QueryTimeoutDuration = time.Second * 5
 )
@@ -19,6 +20,7 @@ type Storage interface {
 	Posts() PostRepository
 	Users() UserRepository
 	Comments() CommentRepository
+	Followers() FollowerRepository
 }
 
 type PostRepository interface {
@@ -36,4 +38,9 @@ type UserRepository interface {
 type CommentRepository interface {
 	Create(context.Context, *model.Comment) error
 	FindByPostId(context.Context, int64) ([]model.Comment, error)
+}
+
+type FollowerRepository interface {
+	Follow(ctx context.Context, userID int64, followerID int64) error
+	Unfollow(ctx context.Context, userID int64, followerID int64) error
 }
