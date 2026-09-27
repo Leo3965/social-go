@@ -92,7 +92,7 @@ func (pr *PostRepository) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (pr PostRepository) Update(ctx context.Context, post *model.Post) error {
+func (pr *PostRepository) Update(ctx context.Context, post *model.Post) error {
 	query := `UPDATE posts
        		  SET title = $1,
             	content = $2,
@@ -118,4 +118,71 @@ func (pr PostRepository) Update(ctx context.Context, post *model.Post) error {
 	}
 
 	return nil
+}
+
+func (pr *PostRepository) GetUserFeed(ctx context.Context, userID int64) ([]model.FeedPost, error) {
+	query := `
+		SELECT
+			p.id,
+			p.user_id,
+			p.title,
+			p.content,
+			p.created_at,
+			p.updated_at,
+			p.version,
+			p.tags,
+			u.username,
+			COUNT(c.id) AS comments_count
+		FROM posts p
+		LEFT JOIN comments c ON c.post_id = p.id
+		LEFT JOIN users u ON p.user_id = u.id
+		JOIN followers f ON f.follower_id = p.user_id OR p.user_id = $1
+		WHERE
+			f.user_id = $1 OR p.user_id = $1
+		GROUP BY p.id, u.id, u.username
+		ORDER BY p.created_at DESC
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, store.QueryTimeoutDuration)
+	defer cancel()
+
+	rows, err := pr.db.QueryContext(
+		ctx,
+		query,
+		userID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	feed := make([]model.FeedPost, 0)
+
+	for rows.Next() {
+		var p model.FeedPost
+
+		err := rows.Scan(
+			&p.ID,
+			&p.UserID,
+			&p.Title,
+			&p.Content,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+			&p.Version,
+			pq.Array(&p.Tags),
+			&p.User.Username,
+			&p.CommentsCount,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		feed = append(feed, p)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return feed, nil
 }

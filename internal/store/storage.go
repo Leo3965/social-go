@@ -28,6 +28,7 @@ type PostRepository interface {
 	Find(context.Context, int64) (*model.Post, error)
 	Delete(context.Context, int64) error
 	Update(context.Context, *model.Post) error
+	GetUserFeed(context.Context, int64) ([]model.FeedPost, error)
 }
 
 type UserRepository interface {

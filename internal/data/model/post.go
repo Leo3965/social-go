@@ -13,3 +13,9 @@ type Post struct {
 	Comments  []Comment `json:"comments"`
 	Version   int64     `json:"version"`
 }
+
+type FeedPost struct {
+	Post
+	User          User `json:"user"`
+	CommentsCount int  `json:"comment_count"`
+}
