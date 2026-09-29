@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/Leo3965/social/internal/data/application"
 	"github.com/Leo3965/social/internal/data/model"
 	"github.com/Leo3965/social/internal/store"
 	"github.com/lib/pq"
@@ -120,7 +121,7 @@ func (pr *PostRepository) Update(ctx context.Context, post *model.Post) error {
 	return nil
 }
 
-func (pr *PostRepository) GetUserFeed(ctx context.Context, userID int64) ([]model.FeedPost, error) {
+func (pr *PostRepository) GetUserFeed(ctx context.Context, userID int64, pagination application.PaginatedFeedQuery) ([]model.FeedPost, error) {
 	query := `
 		SELECT
 			p.id,
@@ -140,7 +141,8 @@ func (pr *PostRepository) GetUserFeed(ctx context.Context, userID int64) ([]mode
 		WHERE
 			f.user_id = $1 OR p.user_id = $1
 		GROUP BY p.id, u.id, u.username
-		ORDER BY p.created_at DESC
+		ORDER BY p.created_at ` + pagination.Sort + `
+		LIMIT $2 OFFSET $3
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, store.QueryTimeoutDuration)
@@ -150,6 +152,8 @@ func (pr *PostRepository) GetUserFeed(ctx context.Context, userID int64) ([]mode
 		ctx,
 		query,
 		userID,
+		pagination.Limit,
+		pagination.Offset,
 	)
 	if err != nil {
 		return nil, err

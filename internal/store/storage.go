@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/Leo3965/social/internal/data/application"
 	"github.com/Leo3965/social/internal/data/model"
 )
 
@@ -28,7 +29,7 @@ type PostRepository interface {
 	Find(context.Context, int64) (*model.Post, error)
 	Delete(context.Context, int64) error
 	Update(context.Context, *model.Post) error
-	GetUserFeed(context.Context, int64) ([]model.FeedPost, error)
+	GetUserFeed(context.Context, int64, application.PaginatedFeedQuery) ([]model.FeedPost, error)
 }
 
 type UserRepository interface {
