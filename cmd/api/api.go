@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Leo3965/social/docs"
 	"github.com/Leo3965/social/internal/store"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 const (
@@ -15,6 +17,8 @@ const (
 	ApplicationJSON = "application/json"
 	TextPlain       = "text/plain; charset=utf-8"
 )
+
+const version = "0.0.1"
 
 type Application struct {
 	Config Config
@@ -26,6 +30,7 @@ type Config struct {
 	Db      DbConfig
 	Env     string
 	Version string
+	ApiURL  string
 }
 
 type DbConfig struct {
@@ -47,6 +52,10 @@ func (app *Application) Mount() http.Handler {
 	// through ctx.Done() that the request has timed out and further
 	// processing should be stopped.
 	r.Use(middleware.Timeout(60 * time.Second))
+
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
+	))
 
 	r.Route("/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
@@ -80,6 +89,11 @@ func (app *Application) Mount() http.Handler {
 }
 
 func (app *Application) Run(handler http.Handler) error {
+	// Docs
+	docs.SwaggerInfo.Version = version
+	docs.SwaggerInfo.Host = app.Config.ApiURL
+	docs.SwaggerInfo.BasePath = "/v1"
+
 	srv := http.Server{
 		Addr:         app.Config.Addr,
 		Handler:      handler,

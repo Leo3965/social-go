@@ -50,3 +50,6 @@ race:
 build:
 	go build -o bin/api ./cmd
 
+.PHONY: gen-docs
+gen-docs:
+	@swag init -g ./main.go -d cmd,internal && swag fmt

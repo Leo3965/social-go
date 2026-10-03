@@ -9,6 +9,25 @@ import (
 	"github.com/Leo3965/social/internal/store/postgres"
 )
 
+const version = "0.0.1"
+
+//	@title			Leo Social API
+//	@description	This is a social server.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @BasePath					/v1
+//
+// @securityDefinitions.apikey	ApiKeyAuth
+// @in							header
+// @name						Authorization
+// @description
 func main() {
 	dbConfig := api.DbConfig{
 		Addr:         env.GetString("DB_ADDR", "postgres://admin:adminpassword@localhost/social?sslmode=disable"),
@@ -21,7 +40,8 @@ func main() {
 		Addr:    env.GetString("ADDR", ":8080"),
 		Db:      dbConfig,
 		Env:     env.GetString("ENV", "development"),
-		Version: "0.0.1",
+		Version: version,
+		ApiURL:  env.GetString("EXTERNAL_URL", "localhost:8080"),
 	}
 
 	db, err := postgres.New(dbConfig.Addr, dbConfig.MaxOpenConns, dbConfig.MaxIdleConns, dbConfig.MaxIdleTime)
