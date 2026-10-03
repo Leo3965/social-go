@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### POSTS - find
-GET http://localhost:8080/v1/posts/4
+GET http://localhost:8080/v1/posts/201
 
 
 ### POSTS - delete
@@ -32,7 +32,7 @@ Content-Type: application/json
 }
 
 ### USERS - find
-GET http://localhost:8080/v1/users/50
+GET http://localhost:8080/v1/users/1
 
 ### USERS - follow
 PUT http://localhost:8080/v1/users/50/follow

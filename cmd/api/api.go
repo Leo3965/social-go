@@ -55,7 +55,7 @@ func (app *Application) Mount() http.Handler {
 			r.Post("/", app.createPostHandler)
 
 			r.Route("/{postID}", func(r chi.Router) {
-				//r.Use(app.postsContextMiddleware)
+				r.Use(app.postsContextMiddleware)
 
 				r.Get("/", app.findByIDPostHandler)
 				r.Delete("/", app.deletePostHandler)
@@ -67,7 +67,7 @@ func (app *Application) Mount() http.Handler {
 			r.Get("/feed", app.getUserFeedHandler)
 
 			r.Route("/{userID}", func(r chi.Router) {
-				//r.Use(app.userContextMiddleware)
+				r.Use(app.userContextMiddleware)
 
 				r.Get("/", app.findUserHandler)
 				r.Put("/follow", app.followUserHandler)
