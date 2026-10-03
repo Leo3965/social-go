@@ -42,3 +42,6 @@ PUT http://localhost:8080/v1/users/50/unfollow
 
 ### USERS - feed
 GET http://localhost:8080/v1/users/feed?offset=4
+
+### USERS - feed | search
+GET http://localhost:8080/v1/users/feed?search=m

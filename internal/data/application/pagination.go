@@ -3,12 +3,15 @@ package application
 import (
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type PaginatedFeedQuery struct {
-	Limit  int    `json:"limit" validate:"gte=1,lte=20"`
-	Offset int    `json:"offset" validate:"gte=0"`
-	Sort   string `json:"sort" validate:"oneof=asc desc"`
+	Limit  int      `json:"limit" validate:"gte=1,lte=200"`
+	Offset int      `json:"offset" validate:"gte=0"`
+	Sort   string   `json:"sort" validate:"oneof=asc desc"`
+	Tags   []string `json:"tags" validade:"max=5"`
+	Search string   `json:"search" valide:"100"`
 }
 
 func (fq PaginatedFeedQuery) Parse(r *http.Request) (PaginatedFeedQuery, error) {
@@ -39,6 +42,16 @@ func (fq PaginatedFeedQuery) Parse(r *http.Request) (PaginatedFeedQuery, error) 
 	sort := qs.Get("sort")
 	if sort != "" {
 		fq.Sort = sort
+	}
+
+	tags := qs.Get("tags")
+	if tags != "" {
+		fq.Tags = strings.Split(tags, ",")
+	}
+
+	search := qs.Get("search")
+	if search != "" {
+		fq.Search = search
 	}
 
 	return fq, nil
